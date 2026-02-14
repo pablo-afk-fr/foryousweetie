@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Love Story 💖</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f2;
+      color: #d63384;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevent scrollbars from the floating */
+    }
+    h1 {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 2.5em;
+    }
+    p {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+    .gallery {
+      position: relative; /* Changed from absolute to relative if it's just a container */
+      width: 100%;
+      height: calc(100vh - 100px); /* Give gallery a height to contain elements, adjust as needed */
+      cursor: default;
+      overflow: hidden; /* Keep elements within the gallery bounds if desired */
+    }
+    .polaroid-frame {
+        background-color: white;
+        border: 10px solid white;
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        padding-bottom: 20px; /* Adjust for text area */
+        position: absolute; /* Crucial for positioning and floating */
+        cursor: grab;
+        user-select: none;
+        transform-origin: center center;
+        width: 170px; /* Adjust as needed */
+        height: auto; /* Adjust height based on content */
+        z-index: 100; /* Ensure it's above background but below dragged item potentially */
+    }
+    .polaroid-image-container {
+        width: 100%;
+        height: 200px; /* Adjust as needed */
+        background-color: #ddd;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .polaroid-image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 0;
+        /* Removed z-index: 100; not needed here */
+    }
+    .add-image-text {
+        font-size: 1em;
+        color: #555;
+        cursor: pointer;
+        /* Removed z-index: 101; not needed here */
+    }
+    .polaroid-text-area {
+        padding: 10px;
+        text-align: center;
+        font-family: 'Shadows Into Light', cursive; /* A handwriting-style font */
+        font-size: 1.2em;
+        color: #333;
+        border-top: 1px solid #ccc;
+        margin-top: 10px;
+        outline: none; /* Remove default focus outline */
+        min-height: 20px; /* Give it a minimum height */
+    }
+    /* Removed .floating class as it wasn't used for the polaroids */
+    .floating-emoji {
+      position: absolute; /* Crucial for positioning and floating */
+      font-size: 50px;
+      user-select: none;
+      cursor: grab;
+      z-index: 101; /* Slightly higher than polaroids initially */
+    }
+    .chat-button, .video-call-button, .edit-toggle-button {
+      position: fixed;
+      bottom: 20px;
+      background: #d63384;
+      color: white;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      z-index: 110; /* Ensure buttons are above floating items */
+    }
+    .chat-button {
+      right: 20px;
+    }
+    .video-call-button {
+      right: 150px;
+      background: #ff4081;
+    }
+    .edit-toggle-button {
+      right: 280px;
+      background: #6f42c1;
+    }
+    .book-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 600px;
+      background: linear-gradient(to bottom right, #ffe0ec, #f9c6df);
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      padding: 30px 20px;
+      z-index: 10; /* Below floating items and buttons */
+    }
+    .quote-text {
+      font-family: 'Georgia', serif;
+      font-size: 1.5em;
+      font-style: italic;
+      color: #c2185b;
+      margin-bottom: 20px;
+      min-height: 60px;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .nav-buttons button {
+      background-color: #e91e63;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      font-size: 0.9em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      p {
+        font-size: 1em;
+      }
+      .polaroid-frame {
+        width: 140px;
+      }
+      .polaroid-image-container {
+        height: 160px;
+      }
+      /* Removed .floating media query */
+      .floating-emoji {
+        font-size: 40px;
+      }
+      .chat-button, .video-call-button, .edit-toggle-button {
+        font-size: 0.9em;
+        padding: 12px 16px;
+      }
+      .video-call-button {
+        right: 100px; /* Adjusted for potential overlap */
+      }
+      .edit-toggle-button {
+        right: 230px; /* Adjusted for potential overlap */
+      }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Happy One-Year Anniversary, My Love! 💕</h1>
+    <p>Every moment with you is special. Here’s to our beautiful journey together!</p>
+    <div class="gallery" id="gallery">
+        <div class="polaroid-frame" style="top: 10%; left: 10%;">
+            <div class="polaroid-image-container">
+                <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+            </div>
+            <div class="polaroid-text-area" contenteditable="true">Our first date</div>
+        </div>
+        <div class="polaroid-frame" style="top: 15%; right: 10%;">
+            <div class="polaroid-image-container">
+                <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+            </div>
+            <div class="polaroid-text-area" contenteditable="true">That funny moment</div>
+        </div>
+         <div class="polaroid-frame" style="top: 40%; left: 20%;">
+             <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">Some text</div>
+         </div>
+         <div class="polaroid-frame" style="top: 50%; right: 20%;">
+             <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">More words</div>
+         </div>
+         <div class="polaroid-frame" style="top: 70%; left: 15%;">
+             <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">Last text</div>
+         </div>
+         <div class="polaroid-frame" style="top: 75%; right: 15%;">
+             <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">New text</div>
+         </div>
+         <div class="polaroid-frame" style="top: 60%; left: 45%;"> <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">More new text</div>
+         </div>
+         <div class="polaroid-frame" style="top: 85%; right: 30%;">
+             <div class="polaroid-image-container">
+                 <div class="add-image-text" onclick="addImage(this.parentNode)">Click to Add Image</div>
+             </div>
+             <div class="polaroid-text-area" contenteditable="true">Final text</div>
+         </div>
+
+        <div class="floating-emoji" style="top: 5%; left: 5%;">❤️</div>
+        <div class="floating-emoji" style="top: 5%; right: 5%;">😍</div>
+        <div class="floating-emoji" style="top: 95%; left: 5%;">💖</div>
+        <div class="floating-emoji" style="top: 95%; right: 5%;">🥰</div>
+        <div class="floating-emoji" style="top: 50%; left: 50%;">💘</div>
+        <div class="floating-emoji" style="top: 30%; right: 40%;">💕</div>
+        <div class="floating-emoji" style="top: 20%; left: 50%;">💞</div>
+        <div class="floating-emoji" style="top: 80%; right: 20%;">💓</div>
+    </div>
+
+    <div class="book-container">
+        <div class="quote-text" id="editablePage" contenteditable="false"></div>
+        <div class="nav-buttons">
+            <button onclick="prevPage()">◀</button>
+            <button onclick="nextPage()">▶</button>
+        </div>
+    </div>
+
+    <button class="chat-button" onclick="openChat()">Chat</button>
+    <button class="video-call-button" onclick="startVideoCall()">Video Call</button>
+    <button class="edit-toggle-button" onclick="toggleEdit()">Edit Quote</button> <script>
+        // --- Button Functions ---
+        function openChat() {
+            alert("Chat feature coming soon!");
+        }
+
+        function startVideoCall() {
+            alert("Video call feature coming soon!");
+        }
+
+        function toggleEdit() {
+            const page = document.getElementById("editablePage");
+            const currentlyEditable = page.contentEditable === "true";
+            page.contentEditable = !currentlyEditable; // Toggle state
+            page.style.outline = currentlyEditable ? "none" : "1px dashed #d63384"; // Visual feedback
+            page.focus(); // Focus when editable
+            alert(currentlyEditable ? "Edit mode deactivated." : "Edit mode activated! You can now update the quote.");
+            // Save changes when disabling edit mode
+            if (currentlyEditable) {
+                pages[currentPageIndex] = page.innerText;
+            }
+        }
+
+        // --- Image Adding Placeholder ---
+        function addImage(container) {
+            // Placeholder: Implement image adding logic here (e.g., file input)
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        container.innerHTML = ''; // Remove "Click to Add Image" text
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+            input.click();
+             // Optional: Remove the input element after selection/cancellation
+             input.remove();
+        }
+
+        // --- Book/Quote Logic ---
+        const editablePage = document.getElementById("editablePage");
+        // Initialize with potentially saved data or defaults
+        let pages = JSON.parse(localStorage.getItem('loveStoryPages')) || ['"Every love story is beautiful, but ours is my favorite."'];
+        let currentPageIndex = 0;
+
+        function savePages() {
+            localStorage.setItem('loveStoryPages', JSON.stringify(pages));
+        }
+
+        function updatePage() {
+            // Ensure the quote text exists for the current index
+            if (currentPageIndex >= pages.length) {
+                 pages.push(`"Page ${currentPageIndex + 1} - Add your thoughts!"`); // Default for new page
+            }
+             if (pages[currentPageIndex] === undefined || pages[currentPageIndex] === null) {
+                pages[currentPageIndex] = `"Page ${currentPageIndex + 1}"`; // Fallback if somehow undefined
+            }
+            editablePage.innerText = pages[currentPageIndex];
+        }
+
+        function prevPage() {
+            // Save current page text if in edit mode before navigating
+            if (editablePage.contentEditable === "true") {
+                 pages[currentPageIndex] = editablePage.innerText;
+            }
+
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                updatePage();
+                savePages(); // Save after navigation
+                // Keep edit mode consistent if it was on
+                editablePage.contentEditable = document.getElementById("editablePage").contentEditable;
+            } else {
+                alert("This is the first page.");
+            }
+        }
+
+        function nextPage() {
+            // Save current page text if in edit mode before navigating
+            if (editablePage.contentEditable === "true") {
+                 pages[currentPageIndex] = editablePage.innerText;
+            }
+
+            currentPageIndex++;
+            updatePage(); // This will add a new page if necessary
+            savePages(); // Save after navigation
+
+            // Ensure new page starts in non-edit mode unless toggled again
+             if (editablePage.contentEditable === "true" && currentPageIndex === pages.length - 1) {
+                 // If we just created a new page while editing, maybe turn editing off for it?
+                 // Or keep it on? User preference. Let's keep it consistent for now.
+             }
+             // Keep edit mode consistent if it was on
+             editablePage.contentEditable = document.getElementById("editablePage").contentEditable;
+
+             if (editablePage.contentEditable === "true") {
+                  page.focus(); // Focus new page if editing
+             }
+        }
+
+        updatePage(); // Initial page load
+
+        // --- Floating Animation Logic ---
+        const gallery = document.getElementById('gallery');
+        // *** THE FIX IS HERE ***
+        const elements = document.querySelectorAll('.polaroid-frame, .floating-emoji');
+        const decelerationRate = 0.98; // How quickly items slow down
+        const bounceFactor = -0.6; // How bouncy collisions are (negative reverses direction)
+
+        elements.forEach(el => {
+            let isDragging = false;
+            let velocityX = (Math.random() - 0.5) * 4; // Start with slight random movement
+            let velocityY = (Math.random() - 0.5) * 4; // Start with slight random movement
+            let lastX, lastY, animationFrameId;
+
+            // Store initial inline positions if available, otherwise use computed
+            let initialLeft = el.style.left;
+            let initialTop = el.style.top;
+
+            // Function to parse position (handles 'px' and '%')
+            function parsePosition(value, dimension) {
+                if (value.includes('%')) {
+                    const percentage = parseFloat(value) / 100;
+                    return dimension === 'width' ? gallery.offsetWidth * percentage : gallery.offsetHeight * percentage;
+                }
+                return parseFloat(value) || 0;
+            }
+
+            // Set initial position in pixels based on inline styles or computed
+             let currentLeft = parsePosition(initialLeft, 'width') || parsePosition(getComputedStyle(el).left, 'width');
+             let currentTop = parsePosition(initialTop, 'height') || parsePosition(getComputedStyle(el).top, 'height');
+             el.style.left = `${currentLeft}px`;
+             el.style.top = `${currentTop}px`;
+
+
+            el.addEventListener('mousedown', (e) => {
+                // Prevent dragging when clicking inside contenteditable area
+                if (e.target.closest('[contenteditable="true"]')) {
+                     // Allow default behavior for text selection/editing
+                     return;
+                }
+                // Prevent dragging if clicking the "Add Image" text specifically
+                if (e.target.classList.contains('add-image-text')) {
+                    // Let the addImage function handle the click
+                    return;
+                }
+
+                isDragging = true;
+                el.style.cursor = 'grabbing';
+                lastX = e.clientX;
+                lastY = e.clientY;
+                velocityX = 0; // Stop movement when grabbed
+                velocityY = 0;
+                cancelAnimationFrame(animationFrameId); // Stop any existing animation
+                el.style.zIndex = 102; // Bring to front
+                e.preventDefault(); // Prevent text selection during drag
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - lastX;
+                const deltaY = e.clientY - lastY;
+
+                currentLeft += deltaX;
+                currentTop += deltaY;
+
+                el.style.left = `${currentLeft}px`;
+                el.style.top = `${currentTop}px`;
+
+                // Update velocity based on quick mouse movements
+                velocityX = deltaX;
+                velocityY = deltaY;
+
+                lastX = e.clientX;
+                lastY = e.clientY;
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                el.style.cursor = 'grab';
+                el.style.zIndex = el.classList.contains('floating-emoji') ? 101 : 100; // Reset z-index
+                animateThrow(); // Start the floating animation
+            });
+
+             document.addEventListener('mouseleave', () => { // Handle mouse leaving window while dragging
+                if (isDragging) {
+                    isDragging = false;
+                    el.style.cursor = 'grab';
+                     el.style.zIndex = el.classList.contains('floating-emoji') ? 101 : 100;
+                    animateThrow();
+                }
+            });
+
+
+            function animateThrow() {
+                if (isDragging) return; // Don't animate if being dragged
+
+                velocityX *= decelerationRate;
+                velocityY *= decelerationRate;
+
+                currentLeft += velocityX;
+                currentTop += velocityY;
+
+                const elementRect = el.getBoundingClientRect(); // Get current size/position relative to viewport
+                const galleryRect = gallery.getBoundingClientRect();
+
+                // Use gallery boundaries for collision detection
+                const minX = 0;
+                const maxX = galleryRect.width - elementRect.width;
+                const minY = -250;
+                const maxY = galleryRect.height - elementRect.height;
+                const upperBoundary = -190; // Adjust as needed
+
+                // Boundary collision checks
+                if (currentLeft < minX) {
+                    currentLeft = minX;
+                    velocityX *= bounceFactor; // Reverse and dampen velocity
+                } else if (currentLeft > maxX) {
+                    currentLeft = maxX;
+                    velocityX *= bounceFactor;
+                }
+
+                if (currentTop < minY) {
+                    currentTop = minY;
+                    velocityY *= bounceFactor;
+                } else if (currentTop > maxY) {
+                    currentTop = maxY;
+                    velocityY *= bounceFactor;
+                }
+
+                el.style.left = `${currentLeft}px`;
+                el.style.top = `${currentTop}px`;
+
+                // Continue animation if velocity is significant
+                if (Math.abs(velocityX) > 0.1 || Math.abs(velocityY) > 0.1) {
+                    animationFrameId = requestAnimationFrame(animateThrow);
+                } else {
+                    // Stop completely if velocity is very low
+                    velocityX = 0;
+                    velocityY = 0;
+                }
+            }
+             // Start initial animation loop for random movement
+             if (!isDragging) { // Only start if not immediately dragged (unlikely but safe)
+                 animateThrow();
+             }
+        });
+    </script>
+</body>
+</html>
